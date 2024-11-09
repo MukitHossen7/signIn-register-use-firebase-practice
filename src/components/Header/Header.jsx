@@ -38,6 +38,7 @@ const Header = () => {
             <NavLink to="/">Home</NavLink>
             <NavLink to="/login">LogIn</NavLink>
             <NavLink to="/register">Register</NavLink>
+            <NavLink to="/createAccount">Create Account</NavLink>
           </ul>
         </div>
         <div className="navbar-end">
