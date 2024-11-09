@@ -1,17 +1,54 @@
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import auth from "../../firebase.init";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 const CreateAccount = () => {
   const [errorMessage, setErrorMessage] = useState("");
+  const [passwordLength, setPasswordLength] = useState("");
+
   const handleCreateAccount = (e) => {
     e.preventDefault();
     const email = e.target.email.value;
     const password = e.target.password.value;
+
     setErrorMessage("");
+    setPasswordLength("");
+
+    const uppercaseLetter = /(?=.*[A-Z])/;
+    const lowercaseLetter = /(?=.*[a-z])/;
+    const digitLetter = /(?=.*[0-9])/;
+    const specialLetter = /(?=.*[\W])/;
+
+    const validatePassword = (password) => {
+      if (password.length < 6) {
+        return "Password should be at least 6 characters long";
+      }
+      if (!uppercaseLetter.test(password)) {
+        return "Uppercase letter must be added to the password";
+      }
+      if (!lowercaseLetter.test(password)) {
+        return "Lowercase letter must be added to the password";
+      }
+      if (!digitLetter.test(password)) {
+        return "One number must be added to the password";
+      }
+      if (!specialLetter.test(password)) {
+        return "Special character must be added to the password";
+      }
+      return "";
+    };
+
+    const passwordError = validatePassword(password);
+    if (passwordError) {
+      setPasswordLength(passwordError);
+      return;
+    }
+
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         console.log(userCredential?.user?.email);
+        toast.success("create account successfully");
       })
       .catch((error) => {
         setErrorMessage(error.message);
@@ -48,10 +85,12 @@ const CreateAccount = () => {
                   className="input input-bordered"
                   required
                 />
-                <label className="label">
-                  <a href="#" className="label-text-alt link link-hover">
-                    Forgot password?
-                  </a>
+                <label className="label flex flex-col items-start">
+                  {passwordLength && (
+                    <span className="text-xs text-red-600 font-bold">
+                      {passwordLength}
+                    </span>
+                  )}
                 </label>
               </div>
               <div className="form-control mt-6">
