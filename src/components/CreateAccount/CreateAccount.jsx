@@ -1,4 +1,7 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+} from "firebase/auth";
 import auth from "../../firebase.init";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -56,8 +59,11 @@ const CreateAccount = () => {
 
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        console.log(userCredential?.user?.email);
+        console.log(userCredential);
         toast.success("create account successfully");
+        sendEmailVerification(auth.currentUser).then(() => {
+          console.log("verification successful");
+        });
       })
       .catch((error) => {
         setErrorMessage(error.message);
