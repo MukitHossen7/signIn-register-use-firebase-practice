@@ -1,6 +1,7 @@
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
+  updateProfile,
 } from "firebase/auth";
 import auth from "../../firebase.init";
 import { useState } from "react";
@@ -19,10 +20,12 @@ const CreateAccount = () => {
     const email = e.target.email.value;
     const password = e.target.password.value;
     const term = e.target.terms.checked;
+    const name = e.target.name.value;
+    const photoUrl = e.target.photoUrl.value;
     setErrorMessage("");
     setPasswordLength("");
     setTermsError("");
-
+    console.log(name, photoUrl);
     const uppercaseLetter = /(?=.*[A-Z])/;
     const lowercaseLetter = /(?=.*[a-z])/;
     const digitLetter = /(?=.*[0-9])/;
@@ -57,19 +60,24 @@ const CreateAccount = () => {
       return;
     }
 
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
+    createUserWithEmailAndPassword(auth, email, password, name, photoUrl).then(
+      (userCredential) => {
         console.log(userCredential);
         toast.success("create account successfully");
-        sendEmailVerification(auth.currentUser).then(() => {
-          console.log("verification successful");
-        });
-      })
-      .catch((error) => {
-        setErrorMessage(error.message);
-      });
+        sendEmailVerification(auth.currentUser)
+          .then(() => {
+            console.log("verification successful");
+          })
+          .catch((error) => {
+            setErrorMessage(error.message);
+          });
+        updateProfile(auth.currentUser, {
+          displayName: name,
+          photoURL: photoUrl,
+        }).then(() => {});
+      }
+    );
   };
-
   return (
     <div className="pt-7">
       <h2 className="font-bold text-3xl text-center">Create Account Now</h2>
@@ -77,6 +85,30 @@ const CreateAccount = () => {
         <div className="hero-content flex-col lg:flex-row-reverse">
           <div className="card bg-base-100 shrink-0 shadow-2xl">
             <form className="card-body px-20" onSubmit={handleCreateAccount}>
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text font-semibold">Full Name</span>
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Full Name"
+                  className="input input-bordered"
+                  required
+                />
+              </div>
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text font-semibold">Photo URL</span>
+                </label>
+                <input
+                  type="text"
+                  name="photoUrl"
+                  placeholder="Photo URL"
+                  className="input input-bordered"
+                  required
+                />
+              </div>
               <div className="form-control">
                 <label className="label">
                   <span className="label-text font-semibold">Email</span>
