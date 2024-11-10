@@ -2,24 +2,32 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import auth from "../../firebase.init";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { IoEyeSharp } from "react-icons/io5";
+import { FaEyeSlash } from "react-icons/fa";
 
 const CreateAccount = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [passwordLength, setPasswordLength] = useState("");
-
+  const [eyes, setEyes] = useState(false);
+  const [termsError, setTermsError] = useState("");
   const handleCreateAccount = (e) => {
     e.preventDefault();
     const email = e.target.email.value;
     const password = e.target.password.value;
-
+    const term = e.target.terms.checked;
     setErrorMessage("");
     setPasswordLength("");
-
+    setTermsError("");
+    console.log(term);
     const uppercaseLetter = /(?=.*[A-Z])/;
     const lowercaseLetter = /(?=.*[a-z])/;
     const digitLetter = /(?=.*[0-9])/;
     const specialLetter = /(?=.*[\W])/;
 
+    if (!term) {
+      setTermsError("Please agree to the terms and conditions");
+      return;
+    }
     const validatePassword = (password) => {
       if (password.length < 6) {
         return "Password should be at least 6 characters long";
@@ -74,18 +82,29 @@ const CreateAccount = () => {
                   required
                 />
               </div>
-              <div className="form-control">
+              <div className="form-control relative">
                 <label className="label">
                   <span className="label-text font-semibold">Password</span>
                 </label>
                 <input
-                  type="password"
+                  type={eyes ? "text" : "password"}
                   placeholder="password"
                   name="password"
                   className="input input-bordered"
                   required
                 />
-                <label className="label flex flex-col items-start">
+                <button
+                  type="button"
+                  onClick={() => setEyes(!eyes)}
+                  className="absolute right-2 top-14"
+                >
+                  {eyes ? <FaEyeSlash /> : <IoEyeSharp />}
+                </button>
+                <label
+                  className={`label flex flex-col items-start ${
+                    passwordLength ? "" : "hidden"
+                  }`}
+                >
                   {passwordLength && (
                     <span className="text-xs text-red-600 font-bold">
                       {passwordLength}
@@ -93,7 +112,23 @@ const CreateAccount = () => {
                   )}
                 </label>
               </div>
-              <div className="form-control mt-6">
+              <div className="form-control">
+                <label className="label justify-start gap-2 cursor-pointer">
+                  <input type="checkbox" name="terms" className="checkbox" />
+                  <span className="label-text">
+                    check our{" "}
+                    <span className="underline text-sky-600">
+                      terms and condition
+                    </span>
+                  </span>
+                </label>
+              </div>
+              {termsError && (
+                <span className="text-xs text-red-600 font-bold">
+                  {termsError}
+                </span>
+              )}
+              <div className="form-control mt-1">
                 <button className="btn btn-primary font-bold">
                   Create Account
                 </button>
