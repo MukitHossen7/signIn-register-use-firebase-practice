@@ -4,6 +4,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { IoEyeSharp } from "react-icons/io5";
 import { FaEyeSlash } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const CreateAccount = () => {
   const [errorMessage, setErrorMessage] = useState("");
@@ -18,7 +19,7 @@ const CreateAccount = () => {
     setErrorMessage("");
     setPasswordLength("");
     setTermsError("");
-    console.log(term);
+
     const uppercaseLetter = /(?=.*[A-Z])/;
     const lowercaseLetter = /(?=.*[a-z])/;
     const digitLetter = /(?=.*[0-9])/;
@@ -66,10 +67,10 @@ const CreateAccount = () => {
   return (
     <div className="pt-7">
       <h2 className="font-bold text-3xl text-center">Create Account Now</h2>
-      <div className="hero pt-5">
+      <div className="hero pt-5  lg:max-w-4xl mx-auto">
         <div className="hero-content flex-col lg:flex-row-reverse">
-          <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
-            <form className="card-body" onSubmit={handleCreateAccount}>
+          <div className="card bg-base-100 shrink-0 shadow-2xl">
+            <form className="card-body px-20" onSubmit={handleCreateAccount}>
               <div className="form-control">
                 <label className="label">
                   <span className="label-text font-semibold">Email</span>
@@ -140,6 +141,15 @@ const CreateAccount = () => {
                   {errorMessage}
                 </small>
               )}
+            </p>
+            <p className="font-semibold text-center pb-4">
+              Already have an account? Please{" "}
+              <span>
+                {" "}
+                <Link to="/login" className="text-green-600 underline">
+                  LogIn
+                </Link>
+              </span>
             </p>
           </div>
         </div>
